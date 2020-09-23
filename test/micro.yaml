@@ -1,0 +1,4 @@
+ID: 1
+Host: http://127.0.0.1:8986
+EndPoint: /config/relation
+IsMicroConfig: true  #true 表示走微服务配置  false 表示走本地配置
