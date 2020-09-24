@@ -1,4 +1,18 @@
 ID: 1
 Host: http://127.0.0.1:8982
 EndPoint: /config/relation
+IsLocal: true
 IsMicroConfig: true  #true 表示走微服务配置  false 表示走本地配置
+serviceList:
+    - name: trest
+      url: 127.0.0.1:8899
+    - name: trest
+      url: 192.168.184.7:7788
+    - name: trest
+      url:  192.168.184.7:8001
+    - name: trest
+      url: 192.168.184.7:8008
+    - name: sy:dazzle
+      url:  192.168.184.7:8003
+    - name: trest
+      url: 127.0.0.1:7895

@@ -1,0 +1,72 @@
+http_redis_model: true #true 表示微服务  false表示本地 serviceList 控制
+mysql:
+    username: root #用户名
+    password: root #密码
+    path: 127.0.0.1:3306 #数据库配置
+    host: 127.0.0.1 #地址
+    port: 3306 #端口
+    dbName: gin #数据库
+    config: charset=utf8&parseTime=True&loc=Local #配置
+    maxIdleConns: 10
+    maxOpenConns: 10
+    logMode: true
+    charset: utf8
+    timeStamp: false #是否使用时间戳自动维护 false  false  使用 GormModel  true 使用 TimeStampModel
+jwt: #jwt配置项
+    secret: zngue
+    expireTime: 3600 #有效期  以秒为单位计算
+    issuer:  zngue.com #发行人
+    subject: zngue.com #主题
+defaultLoad:
+    mysql: true
+    redis: true
+redis:
+    host: 127.0.0.1
+    password:
+    port: 6379
+    dbNum: 10
+    poolSize: 10000
+http_request:
+    host: 127.0.0.1
+    password:
+    port: 6379
+    dbNum: 10
+    poolSize: 10000
+log:
+    path: log
+system:
+    port: 8899
+    sysName: 系统名称
+httpRequest:
+    serviceMode: true
+    redisDbNum: 11
+serviceList:
+    - name: trest
+      url: 127.0.0.1:8899
+    - name: trest
+      url: 192.168.184.7:7788
+    - name: trest
+      url:  192.168.184.7:8001
+    - name: trest
+      url: 192.168.184.7:8008
+    - name: sy:dazzle
+      url:  192.168.184.7:8003
+    - name: trest
+      url: 127.0.0.1:7895
+aliyunoss:
+    accessid: 1
+    accesskey: 2
+    endpoint: 3
+    bucket: 4
+    uploaddir: 5
+    domainName: 6
+    ssl: 7
+wechat:
+    appID:
+    appSecret:
+    token:
+    encodingAESKey:
+    payMchID:
+    payNotifyURL:
+    payKey:
+    redisNum:

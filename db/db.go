@@ -3,6 +3,7 @@ package db
 import (
 	"github.com/go-redis/redis"
 	"github.com/jinzhu/gorm"
+	_ "github.com/jinzhu/gorm/dialects/mysql"
 	"github.com/zngue/go_tool/src/sign_chan"
 	"github.com/zngue/go_tool_micro/config"
 	"time"
@@ -16,43 +17,45 @@ type DB struct {
 	HttpRedisCon *redis.Client
 	MysqlCon *gorm.DB
 }
-
 func (d *DB) RedisConn()  {
 	redisC:=d.Redis
-	d.RedisCon = redis.NewClient(&redis.Options{
-		Addr:         redisC.Host + ":"+redisC.Port,
-		Password:     redisC.Password,
-		DialTimeout:  10 * time.Second,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		PoolSize:     30,
-		PoolTimeout:  30 * time.Second,
-		MinIdleConns: 10,
-		DB:           redisC.DBNum,
-	})
-	pong, err := d.RedisCon.Ping().Result()
-	if err != nil {
-		sign_chan.SignLog("redis:错误",pong,err)
+	if &redisC!=nil {
+		d.RedisCon = redis.NewClient(&redis.Options{
+			Addr:         redisC.Host + ":"+redisC.Port,
+			Password:     redisC.Password,
+			DialTimeout:  10 * time.Second,
+			ReadTimeout:  30 * time.Second,
+			WriteTimeout: 30 * time.Second,
+			PoolSize:     30,
+			PoolTimeout:  30 * time.Second,
+			MinIdleConns: 10,
+			DB:           redisC.DBNum,
+		})
+		pong, err := d.RedisCon.Ping().Result()
+		if err != nil {
+			sign_chan.SignLog("redis:错误",pong,err)
+		}
 	}
 }
 func (d *DB)HttpRedisConn()  {
-	redisC:=d.HttpRedis
-	d.HttpRedisCon = redis.NewClient(&redis.Options{
-		Addr:         redisC.Host + ":"+redisC.Port,
-		Password:     redisC.Password,
-		DialTimeout:  10 * time.Second,
-		ReadTimeout:  30 * time.Second,
-		WriteTimeout: 30 * time.Second,
-		PoolSize:     30,
-		PoolTimeout:  30 * time.Second,
-		MinIdleConns: 10,
-		DB:           redisC.DBNum,
-	})
-	pong, err := d.HttpRedisCon.Ping().Result()
-	if err != nil {
-		sign_chan.SignLog("redis:错误",pong,err)
+	if !config.MicroConf.IsLocal {
+		redisC:=d.HttpRedis
+		d.HttpRedisCon = redis.NewClient(&redis.Options{
+			Addr:         redisC.Host + ":"+redisC.Port,
+			Password:     redisC.Password,
+			DialTimeout:  10 * time.Second,
+			ReadTimeout:  30 * time.Second,
+			WriteTimeout: 30 * time.Second,
+			PoolSize:     30,
+			PoolTimeout:  30 * time.Second,
+			MinIdleConns: 10,
+			DB:           redisC.DBNum,
+		})
+		pong, err := d.HttpRedisCon.Ping().Result()
+		if err != nil {
+			sign_chan.SignLog("http redis:错误",pong,err)
+		}
 	}
-
 }
 func (d *DB)RedisConnClose() (err error)  {
 	defer func() {

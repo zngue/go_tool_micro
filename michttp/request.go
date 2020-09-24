@@ -3,6 +3,7 @@ package michttp
 import (
 	"encoding/json"
 	"errors"
+	"github.com/zngue/go_tool_micro/config"
 	"github.com/zngue/go_tool_micro/db"
 	"github.com/zngue/go_tool_micro/michttp/httplib"
 	"strconv"
@@ -62,13 +63,12 @@ func (r *MicHttpRequest) GetRequesBytes() ([]byte,error) {
 	return  req.Bytes()
 }
 func Getserverurl(servername string) string {
-	servercemode := db.Config.HttpRequest.ServiceMode
+	IsLocal := config.MicroConf.IsLocal
 	var url string
-	if servercemode  {
+	if IsLocal  {
 		url = getlocalserver(servername)
 	} else {
 		url = getregserver(servername)
-
 	}
 	return url
 
@@ -102,7 +102,7 @@ func Formaturl(url string) string {
 	return url
 }
 func getlocalserver(key string) string {
-	serviceList :=db.Config.ServiceList
+	serviceList :=config.MicroConf.ServiceList
 	var url string
 	for _,val:=range serviceList{
 		if val.Name==key {

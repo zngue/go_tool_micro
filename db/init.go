@@ -1,5 +1,7 @@
 package db
+
 import (
+	"fmt"
 	"github.com/go-redis/redis"
 	"github.com/jinzhu/gorm"
 	"github.com/zngue/go_tool/src/sign_chan"
@@ -7,39 +9,48 @@ import (
 	"sync"
 )
 var (
-	Config *config.Config
-	MysqlConn *gorm.DB
-	RedisConn *redis.Client
+	Config        *config.Config
+	MysqlConn     *gorm.DB
+	RedisConn     *redis.Client
 	HttpRedisConn *redis.Client
 )
-func init()  {
-	if Config==nil {
+func init() {
+	if Config == nil {
 		config.MicroConfig()
-		if config.MicroConf == nil{
-			sign_chan.SignLog("配置文件加载失败... miro")
+		if config.MicroConf == nil {
+			sign_chan.SignLog(" micro.yaml 配置文件加载失败... miro")
 		}
-		Config =config.MicroHttpRequest()
-		if Config==nil {
+		sd:=config.MicroConf
+		fmt.Println(sd)
+		if config.MicroConf.IsLocal {
+			fmt.Println(1111)
+			Config=config.YamlToStruck()
+		}else{
+			Config = config.MicroHttpRequest()
+		}
+		if Config == nil {
 			sign_chan.SignLog("配置文件加载失败... config")
 		}
 	}
 }
-type  AutoDB func(db *gorm.DB)
-func InitDB(mysqlDbd ...AutoDB)  {
-	if Config==nil {
+type AutoDB func(db *gorm.DB)
+func InitDB(mysqlDbd ...AutoDB) {
+	if Config == nil {
 		sign_chan.SignLog("配置文件加载失败...")
 		return
 	}
-	load :=Config.DefaultLoad
-	dbConn:=DB{
-		Redis: Config.Redis,
+	load := Config.DefaultLoad
+	load.Mysql = true
+	load.Redis = true
+	dbConn := DB{
+		Redis:     Config.Redis,
 		HttpRedis: Config.HttpRedis,
-		Mysql:Config.Mysql,
+		Mysql:     Config.Mysql,
 	}
 	var wg sync.WaitGroup
 	wg.Add(2)
 	go func() {
-		defer  wg.Done()
+		defer wg.Done()
 		if load.Redis {
 			dbConn.RedisConn()
 			dbConn.HttpRedisConn()
@@ -48,7 +59,7 @@ func InitDB(mysqlDbd ...AutoDB)  {
 		HttpRedisConn = dbConn.HttpRedisCon
 	}()
 	go func() {
-		defer  wg.Done()
+		defer wg.Done()
 		if load.Mysql {
 			dbConn.MysqlConn(mysqlDbd...)
 		}
@@ -56,8 +67,9 @@ func InitDB(mysqlDbd ...AutoDB)  {
 	}()
 	wg.Wait()
 }
+
 //关闭连接池
-func ConnClose () {
+func ConnClose() {
 	if Config != nil {
 		var wg sync.WaitGroup
 		wg.Add(3)
@@ -82,4 +94,3 @@ func ConnClose () {
 		wg.Wait()
 	}
 }
-
