@@ -40,8 +40,6 @@ func InitDB(mysqlDbd ...AutoDB) {
 		return
 	}
 	load := Config.DefaultLoad
-	load.Mysql = true
-	load.Redis = true
 	dbConn := DB{
 		Redis:     Config.Redis,
 		HttpRedis: Config.HttpRedis,

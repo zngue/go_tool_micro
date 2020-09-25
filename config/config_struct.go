@@ -86,6 +86,7 @@ type ServiceList struct {
 type DefaultLoad struct {
 	Mysql bool `json:"mysql" gorm:"column:mysql"  form:"mysql"`
 	Redis bool `json:"redis" gorm:"column:redis" form:"redis"`
+	HttpRedis bool `json:"http_redis" gorm:"column:http_redis" form:"http_redis"`
 }
 type AliyunOss struct {
 	Accessid   string `json:"accessid" gorm:"auto_increment"   form:"accessid"`
@@ -112,3 +113,4 @@ type WeChat struct {
 	PayKey         string `json:"payKey"  gorm:"column:pay_key" form:"pay_key"`
 	RedisNum       int    `json:"redisNum" gorm:"column:redis_num" form:"redis_num"`
 }
+
